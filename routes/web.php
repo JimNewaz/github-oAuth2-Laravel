@@ -24,5 +24,9 @@ Route::get('/auth/github', [GitHubController::class, 'redirectToProvider']);
 Route::get('/auth/github/callback', [GitHubController::class, 'handleProviderCallback']);
 Route::get('/profile', [GitHubController::class, 'profile'])->name('profile');
 
+Route::get('/logout', [GitHubController::class, 'logout'])->name('logout');
+    
+
+
 
 
