@@ -22,4 +22,3 @@ Route::get('/', function () {
 
 Route::get('/auth/github', [GitHubController::class, 'redirectToProvider']);
 Route::get('/auth/github/callback', [GitHubController::class, 'handleProviderCallback']);
-
