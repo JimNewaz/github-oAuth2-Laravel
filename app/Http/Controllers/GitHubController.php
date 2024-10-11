@@ -33,4 +33,19 @@ class GitHubController extends Controller
             'repositories' => $repositories,
         ]);
     }
+
+
+    public function profile(){
+        $user = session('github_user');
+        $repositories = session('repositories');
+
+        if (!$user) {
+            return redirect('/auth/github');
+        }
+
+        return view('profile', [
+            'user' => $user,
+            'repositories' => $repositories,
+        ]);
+    }
 }
