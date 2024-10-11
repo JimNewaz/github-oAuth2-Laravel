@@ -17,7 +17,7 @@ class GitHubController extends Controller
         $user = Socialite::driver('github')->user();
         $token = $user->token;
 
-        // Fetch the user's repositories using GitHub API
+        
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', 'https://api.github.com/user/repos', [
             'headers' => [
