@@ -114,7 +114,7 @@
                     <div class="w-full md:w-4/12 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg mr-4">
                         <h3 class="text-xl font-semibold mb-4">Search Filters</h3>
                         
-                        <form method="POST" action="">
+                        <form method="GET" action="{{ route('profile') }}">
                             @csrf
 
                             <!-- Search by Repository Name -->
@@ -146,15 +146,7 @@
                                 <input type="date" id="date_range" name="date_range" value="{{ request('date_range') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             </div>
                         
-                            <!-- Filter by Repository Type -->
-                            <div class="mb-4">
-                                <label for="type" class="block text-sm font-medium text-gray-700">Repository Type</label>
-                                <select id="type" name="type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2">
-                                    <option value="">All Types</option>
-                                    <option value="fork" {{ request('type') == 'fork' ? 'selected' : '' }}>Forked</option>
-                                    <option value="source" {{ request('type') == 'source' ? 'selected' : '' }}>Original</option>
-                                </select>
-                            </div>
+                            
                         
                             <!-- Submit Button -->
                             <button type="submit" class="px-4 py-2 bg-dark-500 text-white rounded-lg shadow hover:bg-drak-600 bg-custom">

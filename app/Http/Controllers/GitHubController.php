@@ -45,7 +45,7 @@ class GitHubController extends Controller
 
         // Fetch all repositories, not just the first page
         $repositories = [];
-        $perPage = 100; // Max per page is 100 in GitHub API
+        $perPage = 100; 
         $page = 1;
         $client = new \GuzzleHttp\Client();
 
@@ -62,9 +62,9 @@ class GitHubController extends Controller
             ]);
 
             $fetchedRepos = json_decode($response->getBody(), true);
-            $repositories = array_merge($repositories, $fetchedRepos); // Add new batch to repositories
+            $repositories = array_merge($repositories, $fetchedRepos); 
             $page++;
-        } while (count($fetchedRepos) === $perPage); // Continue until no more repositories are returned
+        } while (count($fetchedRepos) === $perPage); 
 
         // Calculate total stars and commits, fetch languages
         $totalStars = array_reduce($repositories, function ($carry, $repo) {
@@ -95,8 +95,9 @@ class GitHubController extends Controller
                     ]);
 
                     $repo['languages'] = json_decode($languageResponse->getBody(), true);
+                    
                 } catch (\GuzzleHttp\Exception\ClientException $e) {
-                    if ($e->getCode() == 409) { // Repo might be empty (e.g. no commits)
+                    if ($e->getCode() == 409) { 
                         continue;
                     } else {
                         throw $e;
@@ -108,23 +109,23 @@ class GitHubController extends Controller
         // Store everything in the session
         session([
             'github_user' => $user,
-            'repositories' => $repositories, // Store all repositories here
+            'repositories' => $repositories, 
             'totalStars' => $totalStars,
             'totalCommits' => $totalCommits,
             'totalRepos' => count($repositories),
-            'totalPages' => ceil(count($repositories) / 10), // Assuming 10 per page in UI
+            'totalPages' => ceil(count($repositories) / 10), 
             'languages' => $this->getAvailableLanguages($repositories),
         ]);
 
-        Log::info('GitHub user data saved in session: ' . json_encode(session()->all()));
-
+        // Log::info('GitHub user data saved in session: ' . json_encode(session()->all()));
+        
         return view('profile', [
             'user' => $user,
-            'repositories' => array_slice($repositories, 0, 10), // Show first 10 in the view
+            'repositories' => array_slice($repositories, 0, 10), 
             'totalRepos' => count($repositories),
             'totalStars' => $totalStars,
             'totalCommits' => $totalCommits,
-            'currentPage' => 1, // Start with page 1
+            'currentPage' => 1,
             'totalPages' => ceil(count($repositories) / 10),
             'languages' => $this->getAvailableLanguages($repositories),
         ]);
@@ -146,6 +147,38 @@ class GitHubController extends Controller
             return redirect('/auth/github');
         }
 
+        $searchTerm = $request->input('search');
+        $languageFilter = $request->input('language');
+        $starsFilter = $request->input('stars');
+        $dateRangeFilter = $request->input('date_range');
+        $typeFilter = $request->input('type');
+
+        // Filter repositories based on search criteria
+        if ($searchTerm) {
+            $repositories = array_filter($repositories, function($repo) use ($searchTerm) {
+                return stripos($repo['name'], $searchTerm) !== false; 
+            });
+        }
+
+        if ($languageFilter) {
+            $repositories = array_filter($repositories, function($repo) use ($languageFilter) {
+                return isset($repo['languages'][$languageFilter]);
+            });
+        }
+
+        if ($starsFilter) {
+            $repositories = array_filter($repositories, function($repo) use ($starsFilter) {
+                return $repo['stargazers_count'] >= $starsFilter;
+            });
+        }
+
+        if ($dateRangeFilter) {
+            $repositories = array_filter($repositories, function($repo) use ($dateRangeFilter) {
+                return strtotime($repo['updated_at']) >= strtotime($dateRangeFilter);
+            });
+        }
+
+
         $currentPage = $request->input('page', 1);
 
         $perPage = 10; 
@@ -161,9 +194,16 @@ class GitHubController extends Controller
             'totalPages' => $totalPages,
             'languages' => $languages,
             'currentPage' => $currentPage,
+            'search' => $searchTerm,
+            'language' => $languageFilter,
+            'stars' => $starsFilter,
+            'date_range' => $dateRangeFilter,
+            'type' => $typeFilter,
         ]);
     }
 
+
+    
 
     public function logout()
     {        
@@ -182,11 +222,11 @@ class GitHubController extends Controller
         $languages = [];
 
         foreach ($repositories as $repo) {
-            if (isset($repo->language) && !in_array($repo->language, $languages)) {
-                $languages[] = $repo->language;
+            if (isset($repo['language']) && !in_array($repo['language'], $languages)) {
+                $languages[] = $repo['language'];
             }
         }
-
+        
         return $languages;
     }
 
