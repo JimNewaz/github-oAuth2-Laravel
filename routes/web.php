@@ -15,9 +15,7 @@ use Laravel\Socialite\Facades\Socialite;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', function () {return view('welcome');});
 
 
 Route::get('/auth/github', [GitHubController::class, 'redirectToProvider']);
@@ -26,7 +24,7 @@ Route::get('/auth/github/callback', [GitHubController::class, 'handleProviderCal
 
 Route::get('/profile', [GitHubController::class, 'profile'])->name('profile');
 
-Route::get('/logout', [GitHubController::class, 'logout'])->name('logout');
+Route::post('/logout', [GitHubController::class, 'logout'])->name('logout');
     
 
 

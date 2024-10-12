@@ -9,7 +9,7 @@
 
     <link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css">
     <link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css">
-    {{-- <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" />     --}}
+    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" />    
 
     @vite('resources/css/app.css')
 </head>
@@ -97,6 +97,12 @@
                         <div class="flex flex-wrap justify-center">
                             <div class="w-full lg:w-9/12 px-4">
                                 <p class="mb-4 text-lg leading-relaxed text-blueGray-700">
+                                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"> Logout</a>
+
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                                        @csrf
+                                    </form>
+                                    
                                     
                                 </p>                                
                             </div>
