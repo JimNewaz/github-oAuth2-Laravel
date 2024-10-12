@@ -142,7 +142,7 @@ class GitHubController extends Controller
         $totalRepos = session('totalRepos');
         $totalPages = session('totalPages');
         $languages = session('languages');
-        // dd($repositories);
+        
         if (!$user) {
             return redirect('/auth/github');
         }
@@ -178,11 +178,18 @@ class GitHubController extends Controller
             });
         }
 
+        // Calculate total number of filtered repositories
+        $totalFilteredRepos = count($repositories);
 
-        $currentPage = $request->input('page', 1);
-
+        // Determine total pages based on filtered results
         $perPage = 10; 
+        $totalPages = ceil($totalFilteredRepos / $perPage); // Update total pages
+
+        // Get current page
+        $currentPage = $request->input('page', 1);
         $offset = ($currentPage - 1) * $perPage;
+
+        // Slice the repositories for pagination
         $repositories = array_slice($repositories, $offset, $perPage);
 
         return view('profile', [
@@ -191,7 +198,7 @@ class GitHubController extends Controller
             'totalStars' => $totalStars,
             'totalCommits' => $totalCommits,
             'totalRepos' => $totalRepos,
-            'totalPages' => $totalPages,
+            'totalPages' => $totalPages, // Pass the updated total pages
             'languages' => $languages,
             'currentPage' => $currentPage,
             'search' => $searchTerm,
@@ -201,6 +208,7 @@ class GitHubController extends Controller
             'type' => $typeFilter,
         ]);
     }
+
 
 
     
