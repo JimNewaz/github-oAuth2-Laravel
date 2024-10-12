@@ -96,13 +96,16 @@
                     <div class="mt-10 py-10 border-t border-blueGray-200 text-center">
                         <div class="flex flex-wrap justify-center">
                             <div class="w-full lg:w-9/12 px-4">
-                                <p class="mb-4 text-lg leading-relaxed text-blueGray-700">
-                                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"> Logout</a>
+                                <p class="mb-4 text-lg leading-relaxed text-blueGray-700">                                    
+                                
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                                    @csrf
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                                        @csrf
-                                    </form>
-                                    
+                                    <button type="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        Logout
+                                    </button>
+                                </form>                                 
+
                                     
                                 </p>                                
                             </div>

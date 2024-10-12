@@ -22,9 +22,14 @@ Route::get('/auth/github', [GitHubController::class, 'redirectToProvider']);
 Route::get('/auth/github/callback', [GitHubController::class, 'handleProviderCallback']);
 // Route::post('/auth/github/callback', [GitHubController::class, 'handleProviderCallback'])->name('github.callback');
 
-Route::get('/profile', [GitHubController::class, 'profile'])->name('profile');
+// Route::get('/profile', [GitHubController::class, 'profile'])->name('profile');
+
+Route::get('/profile', [GitHubController::class, 'profile'])
+    ->middleware('checkGithubAuth')
+    ->name('profile');
 
 Route::post('/logout', [GitHubController::class, 'logout'])->name('logout');
+
     
 
 

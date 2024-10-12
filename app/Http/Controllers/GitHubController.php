@@ -17,6 +17,11 @@ class GitHubController extends Controller
         $user = Socialite::driver('github')->stateless()->user();
         $token = $user->token;
 
+        // session([
+        //     'github_user' => $user,
+        //     'github_token' => $user->token,
+        // ]);
+
         $page = $request->input('page', 1); 
         $perPage = 10; 
         
@@ -59,8 +64,8 @@ class GitHubController extends Controller
                 'Accept'        => 'application/vnd.github.v3+json',
             ],
             'query' => [
-                'page' => $page,      // GitHub API pagination page number
-                'per_page' => $perPage // Number of repositories per page
+                'page' => $page,      
+                'per_page' => $perPage 
             ],
         ]);
 
@@ -114,8 +119,20 @@ class GitHubController extends Controller
             ],
         ]);
 
-        $totalRepos = json_decode($totalReposResponse->getBody())->public_repos; // Total repositories count
-        $totalPages = ceil($totalRepos / $perPage); // Total number of pages
+        $totalRepos = json_decode($totalReposResponse->getBody())->public_repos; 
+        $totalPages = ceil($totalRepos / $perPage); 
+
+        session([
+            'github_user' => $user,
+            'repositories' => $repositories,
+            'totalStars' => $totalStars,
+            'totalCommits' => $totalCommits,
+            'totalRepos' => $totalRepos,
+            'totalPages' => $totalPages,
+            'languages' => $this->getAvailableLanguages($repositories),
+        ]);
+
+        // return redirect('/profile');
 
         return view('profile', [
             'user' => $user,
@@ -128,10 +145,6 @@ class GitHubController extends Controller
             'languages' => $this->getAvailableLanguages($repositories),
         ]);
     }
-
-
-
-
 
     public function profile(){
         $user = session('github_user');
@@ -147,12 +160,41 @@ class GitHubController extends Controller
         ]);
     }
 
-    public function logout(){
+    // public function profile()
+    // {
+    //     $user = session('github_user');
+    //     $repositories = session('repositories');
+    //     $totalStars = session('totalStars');
+    //     $totalCommits = session('totalCommits');
+    //     $totalRepos = session('totalRepos');
+    //     $totalPages = session('totalPages');
+    //     $languages = session('languages');
+
+    //     if (!$user) {
+    //         return redirect('/auth/github');
+    //     }
+
+    //     return view('profile', [
+    //         'user' => $user,
+    //         'repositories' => $repositories,
+    //         'totalStars' => $totalStars,
+    //         'totalCommits' => $totalCommits,
+    //         'totalRepos' => $totalRepos,
+    //         'totalPages' => $totalPages,
+    //         'languages' => $languages,
+    //     ]);
+    // }
+
+
+    public function logout()
+    {        
         session()->forget('github_user');
         session()->forget('repositories');
+        session()->flush();
         
         return redirect('/')->with('message', 'You have been logged out.');
     }
+
 
 
     private function getAvailableLanguages($repositories)
