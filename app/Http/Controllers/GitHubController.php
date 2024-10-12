@@ -12,33 +12,68 @@ class GitHubController extends Controller
         return Socialite::driver('github')->redirect();
     }
 
-    public function handleProviderCallback()
+    public function handleProviderCallback(Request $request)
     {
         $user = Socialite::driver('github')->stateless()->user();
         $token = $user->token;
 
+        $page = $request->input('page', 1); 
+        $perPage = 10; 
+        
+        // Fetch query parameters
+        $search = $request->input('search');
+        $language = $request->input('language');
+        $stars = $request->input('stars');
+        $dateRange = $request->input('date_range');
+        $type = $request->input('type');
+
         // Fetch the user's repositories
+        $client = new \GuzzleHttp\Client();
+        $queryParams = [
+            'page' => $page,
+            'per_page' => $perPage
+        ];
+
+        // Add filters to query parameters
+        if ($search) {
+            $queryParams['q'] = $search;
+        }
+        if ($language) {
+            $queryParams['language'] = $language;
+        }
+        if ($stars) {
+            $queryParams['stars'] = '>=' . $stars;
+        }
+        if ($dateRange) {
+            $queryParams['since'] = $dateRange;
+        }
+        if ($type) {
+            $queryParams['type'] = $type;
+        }
+
+        // Fetch the user's repositories with pagination
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', 'https://api.github.com/user/repos', [
             'headers' => [
                 'Authorization' => 'token ' . $token,
                 'Accept'        => 'application/vnd.github.v3+json',
             ],
+            'query' => [
+                'page' => $page,      // GitHub API pagination page number
+                'per_page' => $perPage // Number of repositories per page
+            ],
         ]);
 
         $repositories = json_decode($response->getBody());
 
-        // total number of repositories
-        $totalRepos = count($repositories);
-
-        // total number of stars
+        // Total number of stars
         $totalStars = array_reduce($repositories, function ($carry, $repo) {
             return $carry + $repo->stargazers_count;
         }, 0);
 
-        // total number of commits
+        // Total number of commits and fetch all languages for repositories
         $totalCommits = 0;
-        foreach ($repositories as $repo) {            
+        foreach ($repositories as $repo) {
             if (isset($repo->owner->login) && isset($repo->name)) {
                 try {
                     // Fetch commits for each repository
@@ -48,29 +83,53 @@ class GitHubController extends Controller
                             'Accept'        => 'application/vnd.github.v3+json',
                         ],
                     ]);
-                    
+
                     $commits = json_decode($commitResponse->getBody());
                     $totalCommits += count($commits);
+
+                    // Fetch all languages for each repository
+                    $languageResponse = $client->request('GET', 'https://api.github.com/repos/'.$repo->owner->login.'/'.$repo->name.'/languages', [
+                        'headers' => [
+                            'Authorization' => 'token ' . $token,
+                            'Accept'        => 'application/vnd.github.v3+json',
+                        ],
+                    ]);
+
+                    $repo->languages = json_decode($languageResponse->getBody());
                 } catch (\GuzzleHttp\Exception\ClientException $e) {
-                    // Handle 409 Conflict for empty repositories (or other errors)
-                    if ($e->getCode() == 409) {                        
+                    if ($e->getCode() == 409) {
                         continue;
-                    } else {                        
+                    } else {
                         throw $e;
                     }
                 }
             }
         }
 
-        
+        // Determine total number of repositories for pagination
+        $totalReposResponse = $client->request('GET', 'https://api.github.com/user', [
+            'headers' => [
+                'Authorization' => 'token ' . $token,
+                'Accept'        => 'application/vnd.github.v3+json',
+            ],
+        ]);
+
+        $totalRepos = json_decode($totalReposResponse->getBody())->public_repos; // Total repositories count
+        $totalPages = ceil($totalRepos / $perPage); // Total number of pages
+
         return view('profile', [
             'user' => $user,
             'repositories' => $repositories,
             'totalRepos' => $totalRepos,
             'totalStars' => $totalStars,
             'totalCommits' => $totalCommits,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'languages' => $this->getAvailableLanguages($repositories),
         ]);
     }
+
+
 
 
 
@@ -94,4 +153,19 @@ class GitHubController extends Controller
         
         return redirect('/')->with('message', 'You have been logged out.');
     }
+
+
+    private function getAvailableLanguages($repositories)
+    {
+        $languages = [];
+
+        foreach ($repositories as $repo) {
+            if (isset($repo->language) && !in_array($repo->language, $languages)) {
+                $languages[] = $repo->language;
+            }
+        }
+
+        return $languages;
+    }
+
 }
