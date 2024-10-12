@@ -32,7 +32,7 @@
                 <div class="flex justify-center mt-16 px-0 sm:items-center">
                     <div class="text-center text-sm text-gray-500 dark:text-gray-400"></div>
                     <div class="flex justify-center text-sm text-gray-500 dark:text-gray-400">
-                        Developed by: <a href="https://www.laravel.com" class="hover:underline">Sayed Newaz</a>
+                        Developed by: <a href="https://www.linkedin.com/in/sayed-nur-e-newaz-77a40a1b8/" class="hover:underline">Sayed Newaz</a>
                     </div>
                 </div>
             </div>
