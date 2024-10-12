@@ -15,20 +15,16 @@ use Laravel\Socialite\Facades\Socialite;
 |
 */
 
-Route::get('/', function () {return view('welcome');});
+Route::get('/', function () {
+    return view('welcome');
+});
 
-
-Route::get('/auth/github', [GitHubController::class, 'redirectToProvider']);
-Route::get('/auth/github/callback', [GitHubController::class, 'handleProviderCallback']);
-// Route::post('/auth/github/callback', [GitHubController::class, 'handleProviderCallback'])->name('github.callback');
-
-// Route::get('/profile', [GitHubController::class, 'profile'])->name('profile');
-
-Route::get('/profile', [GitHubController::class, 'profile'])
-    ->middleware('checkGithubAuth')
-    ->name('profile');
-
-Route::post('/logout', [GitHubController::class, 'logout'])->name('logout');
+Route::middleware(['web'])->group(function () {    
+    Route::get('/auth/github', [GitHubController::class, 'redirectToProvider']);
+    Route::get('/auth/github/callback', [GitHubController::class, 'handleProviderCallback']);
+    Route::get('/profile', [GitHubController::class, 'profile'])->middleware('checkGithubAuth')->name('profile');
+    Route::post('/logout', [GitHubController::class, 'logout'])->name('logout');
+});
 
     
 

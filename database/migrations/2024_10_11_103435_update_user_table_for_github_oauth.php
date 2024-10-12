@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('github_token')->nullable();
             $table->string('github_refresh_token')->nullable();
             $table->string('github_avatar')->nullable();
-            $table->renameColumn('email', 'guthub_email');
+            $table->renameColumn('email', 'github_email');
             $table->renameColumn('name', 'github_name');
             $table->removeColumn('password');
             $table->removeColumn('remember_token');

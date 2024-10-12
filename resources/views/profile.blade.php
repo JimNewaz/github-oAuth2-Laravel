@@ -96,16 +96,8 @@
                     <div class="mt-10 py-10 border-t border-blueGray-200 text-center">
                         <div class="flex flex-wrap justify-center">
                             <div class="w-full lg:w-9/12 px-4">
-                                <p class="mb-4 text-lg leading-relaxed text-blueGray-700">                                    
-                                
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST">
-                                    @csrf
-
-                                    <button type="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        Logout
-                                    </button>
-                                </form>                                 
-
+                                <p class="mb-4 text-lg leading-relaxed text-blueGray-700">   
+                                    
                                     
                                 </p>                                
                             </div>
@@ -177,26 +169,26 @@
                             @foreach($repositories as $repo)
                             <div class="w-full p-2 bg-custom rounded-lg  dark:shadow-none flex flex-col items-center justify-center motion-safe:hover:scale-[1.01] transition-all duration-250 group hover:outline-custom mb-2">
                                 <div class="h-20 w-full flex flex-col justify-center mb-1">
-                                    <h2 class="text-xl font-bold uppercase text-white">{{ $repo->name }}</h2>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $repo->description ?? 'No description available.' }}</p>
+                                    <h2 class="text-xl font-bold uppercase text-white">{{ $repo['name'] }}</h2>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $repo['description'] ?? 'No description available.' }}</p>
                                 </div>
             
                                 <div class="flex text-right mt-2">                                    
                                     <div class="flex space-x-1 mr-3">
                                         <i class="fa fa-star text-yellow-500"></i>
-                                        <span class="text-smtext-gray-500 dark:text-gray-400">{{ $repo->stargazers_count }}</span>
+                                        <span class="text-smtext-gray-500 dark:text-gray-400">{{ $repo['stargazers_count'] }}</span>
                                     </div>
                                     
                                     <div class="flex space-x-1 mr-3">
                                         <i class="fa fa-code-branch text-white"></i>
-                                        <span class="text-sm text-gray-500 dark:text-gray-400">{{ $repo->forks_count }}</span>
+                                        <span class="text-sm text-gray-500 dark:text-gray-400">{{ $repo['forks_count'] }}</span>
                                     </div>
                                 </div>
             
                                 
                                 <div class="mt-3">
-                                    @if (!empty($repo->languages))
-                                        @foreach ($repo->languages as $language => $bytes)
+                                    @if (!empty($repo['languages']))
+                                        @foreach ($repo['languages'] as $language => $bytes)
                                             <span class="bg-gray-100 text-gray-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300 p-2 mr-2 mt-2" style="padding: 0.3rem">
                                                 {{ $language }}
                                             </span>
@@ -221,7 +213,7 @@
                         
                                 <!-- Page Numbers -->
                                 @for ($i = 1; $i <= $totalPages; $i++)
-                                    <a href="{{ route('profile', ['page' => $i]) }}"
+                                    <a href="{{ route('profile', array_merge(request()->query(), ['page' => $i])) }}"
                                         class="px-4 py-2 border-t border-b border-r border-gray-300 text-sm font-medium text-gray-700 {{ $currentPage == $i ? 'bg-blue-500 text-white' : 'bg-white hover:bg-gray-50' }}">
                                         {{ $i }}
                                     </a>
