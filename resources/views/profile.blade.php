@@ -156,38 +156,42 @@
                     <div class="w-full md:w-8/12 p-2">
                         <div class="grid grid-cols-1 gap-6">
                             @foreach($repositories as $repo)
-                            <div class="w-full p-2 bg-custom rounded-lg  dark:shadow-none flex flex-col items-center justify-center motion-safe:hover:scale-[1.01] transition-all duration-250 group hover:outline-custom mb-2">
-                                <div class="h-20 w-full flex flex-col justify-center mb-1">
-                                    <h2 class="text-xl font-bold uppercase text-white">{{ $repo['name'] }}</h2>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $repo['description'] ?? 'No description available.' }}</p>
-                                </div>
-            
-                                <div class="flex text-right mt-2">                                    
-                                    <div class="flex space-x-1 mr-3">
-                                        <i class="fa fa-star text-yellow-500"></i>
-                                        <span class="text-smtext-gray-500 dark:text-gray-400">{{ $repo['stargazers_count'] }}</span>
+
+                            <a href="{{ $repo['html_url'] }}" target="_blank">
+                                <div class="w-full p-2 bg-custom rounded-lg  dark:shadow-none flex flex-col items-center justify-center motion-safe:hover:scale-[1.01] transition-all duration-250 group hover:outline-custom mb-2">
+                                    <div class="h-20 w-full flex flex-col justify-center mb-1">
+                                        <h2 class="text-xl font-bold uppercase text-white">{{ $repo['name'] }}</h2>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $repo['description'] ?? 'No description available.' }}</p>
+                                    </div>
+                
+                                    <div class="flex text-right mt-2">                                    
+                                        <div class="flex space-x-1 mr-3">
+                                            <i class="fa fa-star text-yellow-500"></i>
+                                            <span class="text-smtext-gray-500 dark:text-gray-400">{{ $repo['stargazers_count'] }}</span>
+                                        </div>
+                                        
+                                        <div class="flex space-x-1 mr-3">
+                                            <i class="fa fa-code-branch text-white"></i>
+                                            <span class="text-sm text-gray-500 dark:text-gray-400">{{ $repo['forks_count'] }}</span>
+                                        </div>
+                                    </div>
+                
+                                    
+                                    <div class="mt-3">
+                                        @if (!empty($repo['languages']))
+                                            @foreach ($repo['languages'] as $language => $bytes)
+                                                <span class="bg-gray-100 text-gray-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300 p-2 mr-2 mt-2" style="padding: 0.3rem">
+                                                    {{ $language }}
+                                                </span>
+                                            @endforeach
+                                        @else
+                                            <span class="inline-block rounded-full px-2 py-1 text-xs font-semibold bg-gray-500 text-white">-</span>
+                                        @endif
                                     </div>
                                     
-                                    <div class="flex space-x-1 mr-3">
-                                        <i class="fa fa-code-branch text-white"></i>
-                                        <span class="text-sm text-gray-500 dark:text-gray-400">{{ $repo['forks_count'] }}</span>
-                                    </div>
                                 </div>
-            
-                                
-                                <div class="mt-3">
-                                    @if (!empty($repo['languages']))
-                                        @foreach ($repo['languages'] as $language => $bytes)
-                                            <span class="bg-gray-100 text-gray-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300 p-2 mr-2 mt-2" style="padding: 0.3rem">
-                                                {{ $language }}
-                                            </span>
-                                        @endforeach
-                                    @else
-                                        <span class="inline-block rounded-full px-2 py-1 text-xs font-semibold bg-gray-500 text-white">-</span>
-                                    @endif
-                                </div>
-                                
-                            </div>
+                            </a>
+                            
                             @endforeach
                         </div>
 
