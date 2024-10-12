@@ -93,18 +93,16 @@
 
                         <p> <a href="{{ $user->user['html_url'] }}" target="_blank">View GitHub Profile</a></p>                                       
                     </div>
-                    <div class="mt-10 py-10 border-t border-blueGray-200 text-center">
-                        <div class="flex flex-wrap justify-center">
-                            <div class="w-full lg:w-9/12 px-4">
-                                <p class="mb-4 text-lg leading-relaxed text-blueGray-700">   
-                                    {{-- Logout --}}
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="btn btn-danger">Logout</button>
-                                    </form>
-                                </p>                                
-                            </div>
-                        </div>
+                    <div class="mt-10 py-10 border-t border-blueGray-200 text-right">
+                        <p class="mb-4 text-lg leading-relaxed text-blueGray-700">   
+                            {{-- Logout --}}
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-gray-800 text-white font-medium py-1 px-2 rounded focus:outline-none bg-custom">
+                                    Logout
+                                </button>
+                            </form>
+                        </p>     
                     </div>                    
                 </div>
 
