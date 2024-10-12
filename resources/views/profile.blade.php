@@ -97,8 +97,11 @@
                         <div class="flex flex-wrap justify-center">
                             <div class="w-full lg:w-9/12 px-4">
                                 <p class="mb-4 text-lg leading-relaxed text-blueGray-700">   
-                                    
-                                    
+                                    {{-- Logout --}}
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger">Logout</button>
+                                    </form>
                                 </p>                                
                             </div>
                         </div>
